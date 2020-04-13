@@ -2,9 +2,11 @@ using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MiniProfillerPoc.Models;
 using StackExchange.Profiling.Storage;
 
 namespace MiniProfillerPoc
@@ -21,6 +23,8 @@ namespace MiniProfillerPoc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<TodoDbContext>(x => x.UseSqlServer("server=.;database=Todo;Integrated Security=true;"));
+            
             services.AddControllersWithViews();
             
             services.AddMiniProfiler(options => {
@@ -28,7 +32,7 @@ namespace MiniProfillerPoc
                 options.ShouldProfile = request => {
                     return !request.Path.Value.Contains("sockjs-node");
                 };
-            });
+            }).AddEntityFramework();
             
             services.AddMvc(options => options.EnableEndpointRouting = false);
             
